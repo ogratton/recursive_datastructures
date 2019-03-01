@@ -33,25 +33,33 @@ def height(tree: PrefixTree) -> int:
     return max([1 + height(t) for _, t in tree.branches])
 
 
+def has(tree: PrefixTree, word: str) -> bool:
+    if word == "":
+        return tree.is_end
+
+    head, tail = word[0], word[1:]
+    for c, t in tree.branches:
+        if c == head:
+            return has(t, tail)
+    return False
+
+
 def strings(tree: PrefixTree) -> List[str]:
-    # TODO broken
+    # TODO this is silly and can be cut down
     if tree.is_end:
+        res = [""]
         missing = [[c+s for s in strings(t)] for c, t in tree.branches]
-        if missing:
-            print(missing)
-        return [""]
+        for m in missing:
+            res += m
+        return res
     return [c+tail for c, t in tree.branches for tail in strings(t)]
 
 
-def subtree(tree: PrefixTree) -> PrefixTree:
-    ...
-
-
-def has(tree: PrefixTree) -> bool:
-    ...
-
-
 def predict(tree: PrefixTree) -> List[str]:
+    ...
+
+
+def subtree(tree: PrefixTree) -> PrefixTree:
     ...
 
 
@@ -67,7 +75,7 @@ PrefixTree.__repr__ = ptree_repr
 
 
 if __name__ == "__main__":
-    wo = ["cat", "category", "categories", "catapult", "cocoa", "dog", "dogma", "mouse", "tree", "trees"]
+    wo = ["cat", "category", "categories", "catapult", "catholic", "cocoa", "dog", "dogma", "mouse", "tree", "trees"]
     # wo = ["a"]
     tr = PrefixTree(wo)
 
@@ -75,3 +83,4 @@ if __name__ == "__main__":
     print(size(tr))
     print(height(tr))
     print(strings(tr))
+    print(has(tr, "cocoa"))
