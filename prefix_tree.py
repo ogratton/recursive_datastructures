@@ -1,7 +1,16 @@
+"""
+In Minecraft, a chest has 27 slots, and a prefix tree of the English Scrabble dictionary only needs
+a character for each of the 26 letters of the alphabet and one terminal character (e.g. *)
+
+Chests can be stored within chests, so we can make a whole tree inside a single Minecraft block(!)
+Actually, we need a way of traversing the tree, which will probably involve command blocks and
+dispensers and stuff (I don't remember how Minecraft works)
+"""
+
 from typing import List
 
 
-class PrefixTree:
+class PrefixFreeTree:
 
     def __init__(self, words):
 
@@ -14,20 +23,20 @@ class PrefixTree:
         heads = set(map(lambda x: x[0], words))
         for head in heads:
             tails = list(map(lambda x: x[1:], filter(lambda x: x[0] == head, words)))
-            self.branches.append((head, PrefixTree(tails)))
+            self.branches.append((head, PrefixFreeTree(tails)))
 
 
-def size(tree: PrefixTree) -> int:
+def size(tree: PrefixFreeTree) -> int:
     return tree.is_end + sum(map(lambda x: size(x[1]), tree.branches))
 
 
-def height(tree: PrefixTree) -> int:
+def height(tree: PrefixFreeTree) -> int:
     if not tree.branches:
         return 0
     return max([1 + height(t) for _, t in tree.branches])
 
 
-def has(tree: PrefixTree, word: str) -> bool:
+def has(tree: PrefixFreeTree, word: str) -> bool:
     if word == "":
         return tree.is_end
 
@@ -38,7 +47,7 @@ def has(tree: PrefixTree, word: str) -> bool:
     return False
 
 
-def strings(tree: PrefixTree) -> List[str]:
+def strings(tree: PrefixFreeTree) -> List[str]:
     # TODO this is silly and can be cut down
     if tree.is_end:
         res = [""]
@@ -49,15 +58,15 @@ def strings(tree: PrefixTree) -> List[str]:
     return [c+tail for c, t in tree.branches for tail in strings(t)]
 
 
-def predict(tree: PrefixTree) -> List[str]:
+def predict(tree: PrefixFreeTree) -> List[str]:
     ...
 
 
-def subtree(tree: PrefixTree) -> PrefixTree:
+def subtree(tree: PrefixFreeTree) -> PrefixFreeTree:
     ...
 
 
-def ptree_repr(tree: PrefixTree) -> str:
+def ptree_repr(tree: PrefixFreeTree) -> str:
     # TODO make nicer
     if tree.is_end:
         return '*' + repr(tree.branches)
@@ -65,13 +74,13 @@ def ptree_repr(tree: PrefixTree) -> str:
         return repr(tree.branches)
 
 
-PrefixTree.__repr__ = ptree_repr
+PrefixFreeTree.__repr__ = ptree_repr
 
 
 if __name__ == "__main__":
     wo = ["cat", "category", "categories", "catapult", "catholic", "cocoa", "dog", "dogma", "mouse", "tree", "trees"]
     # wo = ["a"]
-    tr = PrefixTree(wo)
+    tr = PrefixFreeTree(wo)
 
     print(tr)
     print(size(tr))
