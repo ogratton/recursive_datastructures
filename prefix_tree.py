@@ -3,12 +3,6 @@ from typing import List
 
 class PrefixTree:
 
-    class End(object):
-        def __repr__(self):
-            return "*"
-
-    end = End()
-
     def __init__(self, words):
 
         self.is_end = False
@@ -66,7 +60,7 @@ def subtree(tree: PrefixTree) -> PrefixTree:
 def ptree_repr(tree: PrefixTree) -> str:
     # TODO make nicer
     if tree.is_end:
-        return repr(PrefixTree.end) + repr(tree.branches)
+        return '*' + repr(tree.branches)
     else:
         return repr(tree.branches)
 
